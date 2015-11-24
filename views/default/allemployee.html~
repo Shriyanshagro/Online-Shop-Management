@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}
+
+<h1>Full details of all Employees</h1>
+<table class='table'>
+       <tr>
+       <th>Name</th>
+       <th>Rank</th>
+       <th>Contact no.</th>
+       <th>E-mail</th>
+       <th>Address</th>
+       <th>Salary</th>
+       <th>Leave</th>
+       <th>Credit</th>
+       </tr>
+        {{for row in rows:}}
+             <tr>
+             <td>{{=row.first_name}} {{=row.last_name}}</td>
+             <td>{{=row.e_rank}}</td>
+             <td>{{=row.mobile}}</td>
+             <td>{{=row.email}}</td>
+             <td>{{=row.s_address}},{{=row.s_city}},{{=row.s_state}},{{=row.country}},{{=row.zip}}</td>
+             <td>{{=row.salary}}</td>
+             <td>{{=row.e_absent}}</td>
+             <td>{{=row.credit}}</td>
+             </tr>  
+               
+        {{pass}}        
+</table> 
+<hr>
+{{link = URL(c ='default', f = 'employee')}}
+<h3><a href="{{=link}}"> Done</a></h3>
+       

@@ -1,0 +1,19 @@
+{{extend 'layout.html'}}        
+
+<h3>Customer Management</h3>
+<hr>
+{{link = URL(c ='default', f = 'add_customer')}}
+<h3> New customer 
+
+{{link = URL(c ='default', f = 'delete_customer')}}
+<div class="copyright pull-right">
+ Remove customer
+</div>
+
+</h3>
+
+
+<hr>
+
+<h3>Billing</h3>
+{{=form}}

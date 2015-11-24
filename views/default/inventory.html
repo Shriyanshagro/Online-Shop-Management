@@ -1,0 +1,35 @@
+{{extend 'layout.html'}}        
+
+<h3>Inventory
+
+
+<div class="copyright pull-right"><img src="/Online_Shop_Management/static/images/inventory.png" height="100" width="100" alt="Burden Help" align="right"></div>
+
+
+</h3>
+<hr>
+
+<h3> Need to add a product??</h3>
+{{=form}}
+<hr>
+<h3> Need to view present quantity and price of a product??</h3>
+{{=form1}}
+
+{{link = URL(c ='default', f = 'allproducts')}}
+<h4><a href="{{=link}}"> Want to  see details of all products??   <-- Click</a></h4>
+
+
+<hr>
+<h3> Need to update quantity of a product??</h3>
+{{=form2}}
+
+<hr>
+<h3> Need to update price of a product??</h3>
+{{=form3}}
+
+<hr>
+<h3> Need to remove a product??</h3>
+{{=form4}}
+
+
+

@@ -1,0 +1,20 @@
+{{extend 'layout.html'}}
+
+<h2>Employees</h2>
+<hr>
+<h3>Need to update details of existing employees??</h3>
+{{=form}}
+<hr>
+{{link = URL(c ='default', f = 'salesman')}}
+<h3><a href="{{=link}}"> Need to see which salesman has credited how much amount??   <-- Click</a></h3>
+<hr>
+
+{{link = URL(c ='default', f = 'allemployee')}}
+<h3><a href="{{=link}}"> Need to see details of all employees??   <-- Click</a></h3>
+
+<hr>
+<h3>Need to see details of a particular employee??</h3>
+{{=form1}}
+
+
+

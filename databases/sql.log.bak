@@ -1,0 +1,112 @@
+timestamp: 2015-05-04T01:57:01.534059
+CREATE TABLE auth_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name CHAR(128),
+    last_name CHAR(128),
+    email CHAR(512),
+    password CHAR(512),
+    registration_key CHAR(512),
+    reset_password_key CHAR(512),
+    registration_id CHAR(512)
+);
+success!
+timestamp: 2015-05-04T01:57:01.642065
+CREATE TABLE auth_group(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2015-05-04T01:57:01.753974
+CREATE TABLE auth_membership(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE
+);
+success!
+timestamp: 2015-05-04T01:57:02.001653
+CREATE TABLE auth_permission(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE,
+    name CHAR(512),
+    table_name CHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2015-05-04T01:57:02.254888
+CREATE TABLE auth_event(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    time_stamp TIMESTAMP,
+    client_ip CHAR(512),
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    origin CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2015-05-04T01:57:02.355767
+CREATE TABLE auth_cas(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    created_on TIMESTAMP,
+    service CHAR(512),
+    ticket CHAR(512),
+    renew CHAR(1)
+);
+success!
+timestamp: 2015-05-04T02:11:40.502656
+ALTER TABLE auth_user ADD salary INTEGER;
+timestamp: 2015-05-04T02:11:40.605058
+ALTER TABLE auth_user ADD zip INTEGER;
+timestamp: 2015-05-04T02:11:40.705432
+ALTER TABLE auth_user ADD mobile INTEGER;
+timestamp: 2015-05-04T02:11:40.817765
+ALTER TABLE auth_user ADD credit INTEGER;
+timestamp: 2015-05-04T02:11:40.950312
+ALTER TABLE auth_user ADD address CHAR(228);
+timestamp: 2015-05-04T02:11:41.084424
+ALTER TABLE auth_user ADD e_rank INTEGER;
+timestamp: 2015-05-04T02:11:41.195797
+ALTER TABLE auth_user ADD e_absent INTEGER;
+success!
+timestamp: 2015-05-04T02:20:56.082480
+ALTER TABLE auth_user ADD image CHAR(512);
+success!
+timestamp: 2015-05-04T02:27:58.055831
+CREATE TABLE Suppliers(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name CHAR(512),
+    country CHAR(28),
+    s_state CHAR(28),
+    s_city CHAR(28),
+    s_address CHAR(28),
+    s_zip INTEGER,
+    s_no INTEGER,
+    s_email CHAR(512),
+    s_transaction INTEGER
+);
+success!
+timestamp: 2015-05-04T02:32:49.844723
+CREATE TABLE suppliers(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name CHAR(512),
+    country CHAR(28),
+    s_state CHAR(28),
+    s_city CHAR(28),
+    s_address CHAR(28),
+    s_zip INTEGER,
+    s_no INTEGER,
+    s_transaction INTEGER
+);
+timestamp: 2015-05-04T02:33:18.095370
+CREATE TABLE supplier(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name CHAR(512),
+    country CHAR(28),
+    s_state CHAR(28),
+    s_city CHAR(28),
+    s_address CHAR(28),
+    s_zip INTEGER,
+    s_no INTEGER,
+    s_transaction INTEGER
+);
+success!

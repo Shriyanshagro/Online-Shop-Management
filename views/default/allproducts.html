@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}
+
+<h1>Full details of all Products
+
+
+<div class="copyright pull-right"><img src="/Online_Shop_Management/static/images/inventory.png" height="100" width="100" alt="Burden Help" align="right"></div>
+
+
+</h1>
+<table class='table'>
+       <tr>
+       <th>Name</th>
+       <th>Price/Qty</th>
+       <th>Qty(At Present)</th>
+       </tr>
+        {{for row in rows:}}
+             <tr>
+             <td>{{=row.Name}}</td>
+             <td>{{=row.price}}</td>
+             <td>{{=row.qty}}</td>
+             </tr>  
+               
+        {{pass}}        
+</table>        
+
+
+{{link = URL(c ='default', f = 'inventory')}}
+<h3><a href="{{=link}}"> Done</a></h3>
+
+
+        <h6><center><p><-----------------------------------------------------------------Done---------------------------------------------------------------></p></center></h6>       
+

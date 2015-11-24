@@ -1,0 +1,38 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+
+{{block header}}
+    <header class="container-fluid background">
+      <div class="jumbotron text-center">
+        {{if response.title:}}
+        <h1>{{=response.title}}
+          <small>{{=response.subtitle or ''}}</small></h1>
+        {{pass}}
+      </div>
+    </header>
+{{end}}
+
+{{if 'message' in globals():}}
+
+<h1>Contacts</h1>
+<ol>
+    <li><h3>This Page is Devoloped by Shriyansh Agrawal.</h3></li>
+    <ul>
+
+
+        <div class="copyright pull-right"><img src="/Online_Shop_Management/static/images/final.jpg" alt="Burden Help" align="right" height="300" width="350"></div>
+        <li><h4>Shriyansh Agrawal , 8142052256</h4></li>
+
+    </ul>
+    <li><h3>For more Information Go to My <a href='www.facebook.com/shriyansha1'>Facebook Profile</a>.</h3></li>
+
+</ol>
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
+
+{{block right_sidebar}}
+{{end}}
+

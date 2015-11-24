@@ -1,0 +1,41 @@
+{{extend 'layout.html'}}
+
+
+<h1>Full details of all Suppliers
+
+
+<div class="copyright pull-right"><img src="/Online_Shop_Management/static/images/supply.png" height="80" width="80" alt="Burden Help" align="right"></div>
+
+
+</h1>
+<table class='table'>
+       <tr>
+       <th>Name</th>
+       <th>Contact no.</th>
+       <th>E-mail</th>
+       <th>Address</th>
+       <th>Transaction(Till now)</th>
+       </tr>
+        {{for row in rows:}}
+           {{if row.Name!="User":}}     
+             <tr>
+             <td>{{=row.Name}}</td>
+             <td>{{=row.s_no}}</td>
+             <td>{{=row.s_email}}</td>
+             <td>{{=row.s_address}},{{=row.s_city}},{{=row.s_state}},{{=row.country}},{{=row.s_zip}}</td>
+             <td>{{=row.s_transaction}}</td>
+             </tr>  
+           {{pass}}    
+        {{pass}}        
+</table>        
+
+
+{{link = URL(c ='default', f = 'supplier')}}
+<h3><a href="{{=link}}"> Done</a></h3>
+
+
+        <h6><center><p><-----------------------------------------------------------------Done------------------------------------------------------></p></center></h6>       
+        
+        
+
+                                   

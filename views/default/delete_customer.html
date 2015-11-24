@@ -1,0 +1,15 @@
+{{extend 'layout.html'}}        
+
+<h3>Remove an existing customer
+
+
+<div class="copyright pull-right"><img src="/Online_Shop_Management/static/images/customer.png" height="100" width="100" alt="Burden Help" align="right"></div>
+
+
+</h3>
+<hr>
+{{=form.add_button('Remove another customer', URL('remove_customer'))}}
+{{=form.add_button('Done', URL('customer'))}}
+
+{{=form}}
+

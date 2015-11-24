@@ -1,0 +1,645 @@
+def index():
+    if auth.is_logged_in():
+            
+            redirect(URL(new_index))
+            
+        
+    if not response.flash:    
+        response.flash = T("Welcome Sir ")
+        
+    return dict(message=T('Welcome to web2py!'))
+
+def new_index():
+    if auth.is_logged_in():
+        if auth.user.e_rank==1:
+                
+                if not response.flash:
+                        response.flash=T("Welcome to High5Shop")
+                form = SQLFORM.factory(Field('opt',label=T("Select a page to manage"),requires = IS_IN_SET(
+     {'I': 'Inventory', 'E':'Employee', 'S':'Supplier'},
+    zero = 'Choose' ),
+            ))                
+                if form.process(formname='form').accepted:
+                      if form.vars.opt=='I':
+                        redirect(URL(inventory))
+                      
+                      elif form.vars.opt=='E':
+                        redirect(URL(employee))
+                      
+                      if form.vars.opt=='S':
+                        redirect(URL(supplier))
+                      
+                      
+                return dict(form=form)                
+    
+        elif auth.user.e_rank==2:
+                response.flash=T("Welcome to High5Shop")
+                form = SQLFORM.factory(Field('opt',label=T("Select a page to manage"),requires = IS_IN_SET(
+     {'I': 'Inventory', 'C':'Customer', 'S':'Supplier'},
+    zero = 'Choose' ),
+            ))                
+                if form.process(formname='form').accepted:
+                      
+                      if form.vars.opt=='I':
+                        redirect(URL(inventory))
+                      
+                      elif form.vars.opt=='C':
+                        redirect(URL(customer))
+                      
+                      if form.vars.opt=='S':
+                        redirect(URL(supplier))
+                                              
+                return dict(form=form)                
+        elif auth.user.e_rank==3:
+                response.flash=T("Welcome to High5Shop")
+                
+                form = SQLFORM.factory(Field('opt',label=T("You can access only one page"),requires = IS_IN_SET(
+     {'C':'Customer'},
+    zero = 'Choose' ),
+            ))                
+                if form.process(formname='form').accepted:
+                      
+                      if form.vars.opt=='C':
+                        redirect(URL(Customer))
+                
+                return dict(form=form)
+        
+        elif auth.user.e_rank==4:
+                response.flash=T("Welcome to High5Shop")
+                form = SQLFORM.factory(Field('opt',label=T("You can access only one page"),requires = IS_IN_SET(
+     {'C':'Customer'},
+    zero = 'Choose' ),
+            ))                
+                if form.process(formname='form').accepted:
+                        response.flash=T("Welcome to High5")
+                
+                return dict(form=form)
+    
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+                    
+
+def user():
+    """
+    exposes:
+    http://..../[app]/default/user/login
+    http://..../[app]/default/user/logout
+    http://..../[app]/default/user/register
+    http://..../[app]/default/user/profile
+    http://..../[app]/default/user/retrieve_password
+    http://..../[app]/default/user/change_password
+    http://..../[app]/default/user/manage_users (requires membership in
+    use @auth.requires_login()
+        @auth.requires_membership('group name')
+        @auth.requires_permission('read','table name',record_id)
+    to decorate functions that need access control
+    """
+    return dict(form=auth())
+
+
+@cache.action()
+def download():
+    return response.download(request, db)
+
+
+def call():
+    return service()
+
+def employee():
+    if auth.is_logged_in():
+        if auth.user.e_rank==1:
+    
+            rows = db(db.auth_user).select()
+            
+            form = SQLFORM.factory(Field('e_name',label=T("Employee's First Name"),requires=IS_IN_DB(db, 'auth_user.first_name', '%(first_name)s')),
+            Field('e_mobile', type='integer',length=10, label=T("Employee's Mobile Number"),requires=IS_IN_DB(db,'auth_user.mobile','%(mobile)s') ),
+                    Field('e_rank',type='integer',length=1, label=T("Rank in Company(1/2/3/4)"),),
+                    Field('salary',type='integer', label=T("Salary"),),
+                    Field('e_absent',type='integer',label=T("Leave(increment)"))
+                    )
+            
+            if form.process(formname='form').accepted:                
+        #    if form.process().accepted:
+                for row in rows:
+                        a= row.mobile
+                        b= form.vars.e_mobile
+                        b=int(b)
+                        a=int(a)
+                        response.flash =(b,a)
+                        if b==a:
+                             if row.first_name==form.vars.e_name:
+                                                
+                                        if form.vars.e_rank:
+                                                new = db(db.auth_user.id==row.id).select().first()
+                                                new.update_record(e_rank=form.vars.e_rank)
+                                                        
+                                        if form.vars.salary:
+                                                new = db(db.auth_user.id==row.id).select().first()
+                                                new.update_record(salary=form.vars.salary)
+                                        
+                                        if form.vars.e_absent:
+                                                new = db(db.auth_user.id==row.id).select().first()
+                                                new.update_record(e_absent=row.e_absent+form.vars.e_absent)
+                                                        
+                                        response.flash ="Details Updated"  
+                             else:
+                                        response.flash ="Wrong Credentials"
+            form1 = SQLFORM.factory(Field('e_name',label=T("Employee's First Name"),requires=IS_IN_DB(db, 'auth_user.first_name', '%(first_name)s')),
+            Field('e_mobile', type='integer',length=10, label=T("Employee's Mobile Number"),requires=IS_IN_DB(db,'auth_user.mobile','%(mobile)s') )
+            )
+            if form1.process(formname='form1').accepted:                
+         #   if form1.process().accepted:
+                for row in rows:
+                        a= row.mobile
+                        b= form1.vars.e_mobile
+                        b=int(b)
+                        a=int(a)
+                        
+                        if b==a:
+                             if row.first_name==form1.vars.e_name:
+ #                               session.flash=T('Details of %s',%(row.first_name))
+                                redirect(URL('particular_employ',vars={'first_name':row.first_name,'last_name':row.last_name,'mobile':row.mobile,'email':row.email,'s_address':row.s_address,'s_city':row.s_city,'s_state':row.s_state,'country':row.country,'zip':row.zip,'salary':row.salary,'e_absent':row.e_absent,'credit':row.credit,'e_rank':row.e_rank}))
+            return dict(form=form,form1=form1)
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+         
+
+def allemployee():
+     if auth.is_logged_in():
+        if auth.user.e_rank==1:
+     
+                rows = db(db.auth_user).select()
+                return dict(rows=rows)                   
+        
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+     else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+       
+
+
+def salesman():
+     if auth.is_logged_in():
+        if auth.user.e_rank==1 or auth.user.e_rank==2:
+     
+           rows = db(db.auth_user).select()
+           return dict(rows=rows)                   
+      
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+     else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+     
+     
+     
+def particular_employ():
+     if auth.is_logged_in():
+        if auth.user.e_rank==1:
+     
+                   response.flash=T("Details of %s")%(request.vars.first_name)
+                   return dict()      
+      
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+     else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+     
+def add_supplier():
+     if auth.is_logged_in():
+        if auth.user.e_rank==1 or auth.user.e_rank==2:
+                rows = db(db.supplier).select()
+                form = SQLFORM.factory(Field('Name','string',requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty),IS_NOT_IN_DB(db, 'supplier.Name'))),
+    Field('country', length=28, label=T("Country"), default='India',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_state', length=28, label=T("State"), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_city', length=28, label=T("city"), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_address', length=28, label=T("Door/street NO. "), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_zip', length=6, type='integer',label=T("ZIP code"), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_no',type='integer',length=10, label=T("Contact number"), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty),IS_NOT_IN_DB(db, 'supplier.s_no'))),
+    Field("s_email",label=T("Email"),requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty),IS_NOT_IN_DB(db, 'supplier.s_email'))) ,   
+    Field('s_transaction','integer',label=T("Transaction(Till now)"),default='0',writable=False)
+)    
+        
+                if form.process(formname='form').accepted:                
+                        db.supplier.insert(s_email=form.vars.s_email,s_city=form.vars.s_city,s_no=form.vars.s_no,s_zip=form.vars.s_zip,s_address=form.vars.s_address,s_state=form.vars.s_state,Name=form.vars.Name,country=form.vars.country)
+                    
+                return dict(form=form)     
+        
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+     else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+       
+def supplier():
+     if auth.is_logged_in():
+        if auth.user.e_rank==1 or auth.user.e_rank==2:
+     
+              pro = db(db.product).select()
+       
+              response.flash=T("Manage your suppliers from this Portal")           
+              form2=SQLFORM.factory(Field('Product_Name', requires=IS_IN_DB(db, 'product.Name', '%(Name)s',zero="All")))
+        
+       
+              if form2.process(formname='form2').accepted:                
+                session.flash=T('List of Suppliers')
+                redirect(URL('supplier2',vars={'p_name':form2.vars.Product_Name}))
+       
+                
+              form3=SQLFORM.factory(Field('country', requires=IS_IN_DB(db, 'supplier.country', '%(country)s')),Field('city', requires=IS_IN_DB(db, 'supplier.s_city', '%(s_city)s')),Field('state', requires=(IS_IN_DB(db, 'supplier.s_state', '%(s_state)s'))),Field('transaction_above',label=T("Transaction above"),type='integer'),Field('transaction_below',label=T("Transaction below(inclusive)"),type='integer')
+       )
+       #form3.hideerror=True
+              if form3.process(formname='form3').accepted:                
+                redirect(URL('particular_supplier',vars={'country':form3.vars.country,'city':form3.vars.city,'state':form3.vars.state,'transaction_above':form3.vars.transaction_above,'transaction_below':form3.vars.transaction_below}))
+                
+              form4 = SQLFORM.factory(Field('Name','string',requires=(IS_IN_DB(db, 'supplier.Name', '%(Name)s')))
+    )    
+        
+              if form4.process(formname='form4').accepted:                
+                db(db.supplier.Name==form4.vars.Name).delete()
+                response.flash=T("%s is now deleted from records")%(form4.vars.Name)
+       
+        
+              return dict(form2=form2,form3=form3,form4=form4)
+     
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+     else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+        
+def supplier2():
+    if auth.is_logged_in():
+        if auth.user.e_rank==1 or auth.user.e_rank==2:
+     
+                rows = db(db.product_supplier).select()  
+                form = SQLFORM.factory(Field('Name','string',requires=(IS_IN_DB(db, 'supplier.Name', '%(Name)s'))),
+      Field('qty',label=T("Quantity needed"),type='integer',requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty)))
+    )    
+        
+                if form.process(formname='form').accepted:                
+                        p=0
+                        for row in rows:
+                                if row.p_name==request.vars.p_name:     
+                                        if row.s_name==form.vars.Name:
+                                                p=1
+                        if p==1:                           
+                                response.flash=T("An e-mail has been sent to %s with required details")%(form.vars.Name)
+                        else :      
+                                response.flash=T("Provided Supplier doesn't supply provided Product,Plese provide correct details")
+                return dict(rows=rows,form=form)
+        
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+         
+def allsupply() :
+    if auth.is_logged_in():
+        if auth.user.e_rank==1 or auth.user.e_rank==2:
+     
+                  response.flash=T("List of all Suppliers")
+                  rows = db(db.supplier).select()
+                  return dict(rows=rows)
+
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))    
+
+    
+def particular_supplier():
+    if auth.is_logged_in():
+        if auth.user.e_rank==1 or auth.user.e_rank==2:
+     
+                    rows = db(db.supplier).select()
+                    return dict(rows=rows)
+    
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))    
+        
+def inventory():
+    if auth.is_logged_in():
+        if auth.user.e_rank==1 or auth.user.e_rank==2:
+     
+                rows=db(db.product).select()
+                relation=db(db.product_supplier).select()
+                supply=db(db.supplier).select()       
+        
+                response.flash=T("Manage Company's Inventory here")
+                form = SQLFORM.factory(Field('p_name',label=T("Product Name"),requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty),IS_NOT_IN_DB(db, 'product.Name'))),
+    Field('price',  label=T("Price/Qty"), type='integer',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    )    
+        
+                if form.process(formname='form').accepted:                
+                        db.product.insert(Name=form.vars.p_name,price=form.vars.price)
+                       
+                form1 = SQLFORM.factory(Field('p_name',label=T("Product Name"),requires=(IS_IN_DB(db, 'product.Name', '%(Name)s'))),
+        )    
+        
+                if form1.process(formname='form1').accepted:                
+                        for row in rows:
+                                if row.Name==form1.vars.p_name:
+                                        response.flash=T("Presently You have %d piece of %s,each of %d")%(row.qty,row.Name,row.price)
+        
+                form2 = SQLFORM.factory(Field('p_name',label=T("Product Name"),requires=(IS_IN_DB(db, 'product.Name', '%(Name)s'))),
+    Field('qty',  label=T("Quantity"), type='integer',requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty)),default='10'),
+    Field('s_name',label=T("By Seller"),requires=(IS_IN_DB(db, 'supplier.Name', '%(Name)s')))    
+    )    
+        
+                if form2.process(formname='form2').accepted:                
+                
+                #update quantity
+                        for row in rows:
+                                if row.Name==form2.vars.p_name:
+                                        paisa=int(row.price)
+                                        new = db(db.product.id==row.id).select().first()
+                                        new.update_record(qty=int(row.qty)+int(form2.vars.qty))
+                                        qty=int(row.qty)+int(form2.vars.qty)
+                                        response.flash=T("New quntity of %s is %d")%(form2.vars.p_name,qty)
+            #update relation table
+                        p=0
+                        for rel in relation:
+                                if rel.p_name==form2.vars.p_name:
+                                        if rel.s_name==form2.vars.s_name:                                        
+                                                p=1
+                        if p==0:
+                                db.product_supplier.insert(p_name=form2.vars.p_name,s_name=form2.vars.s_name)
+               
+                        qty=int(form2.vars.qty)
+            #update transaction
+                        for sup in supply:
+                                if sup.Name==form2.vars.s_name:
+                                        total=int(qty*paisa)
+                                        new = db(db.supplier.id==sup.id).select().first()
+                                        new.update_record(s_transaction=int(sup.s_transaction)+total)
+                        
+                form3 = SQLFORM.factory(Field('p_name',label=T("Product Name"),requires=(IS_IN_DB(db, 'product.Name', '%(Name)s'))),
+            Field('price',  label=T("Price/Qty"), type='integer',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+       )    
+        
+                if form3.process(formname='form3').accepted:                
+                                for row in rows:
+                                        if row.Name==form3.vars.p_name:
+                                                new = db(db.product.id==row.id).select().first()
+                                                new.update_record(price=int(form3.vars.price))
+                                                response.flash=T("New price of %s is %d")%(row.Name,row.price)
+        
+                form4 = SQLFORM.factory(Field('p_name',label=T("Product Name"),requires=(IS_IN_DB(db, 'product.Name', '%(Name)s'))),
+                  )    
+        
+                if form4.process(formname='form4').accepted:                
+                                db(db.product.Name==form4.vars.p_name).delete()
+                                response.flash=T("%s is now deleted")%(form4.vars.p_name)
+        
+                                                   
+                return dict(form=form,form1=form1,form2=form2,rows=rows,form3=form3,form4=form4)
+        
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+    
+        
+def allproducts():
+    if auth.is_logged_in():
+        if auth.user.e_rank==1 or auth.user.e_rank==2:
+     
+                    rows=db(db.product).select()
+                    response.flash=T("List of all Products")               
+                    return dict(rows=rows) 
+       
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))    
+    
+
+        
+def customer():
+    if auth.is_logged_in():
+        if auth.user.e_rank==3 or auth.user.e_rank==2:
+     
+                        rows=db(db.customer).select()
+                        if not response.flash:
+                                response.flash=T("Welcome to Customer Management Portal")
+                        form = SQLFORM.factory(Field('c_name',label=T("Customer Name"),requires=(IS_IN_DB(db, 'customer.c_name', '%(c_name)s'))),
+                        Field('pro_no',label=T("Number of different Products"),requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty)),type='integer'),
+                  )    
+        
+                        if form.process(formname='form').accepted:                
+                                session.flash=T("%s is purchasing %d products")%(form.vars.c_name,int(form.vars.pro_no))
+                                redirect(URL('customer2',vars={'total':int(0),'c_name':form.vars.c_name,'pro_no':int(form.vars.pro_no)}))                
+    
+                
+                        return dict(rows=rows,form=form)        
+                
+        
+        
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))    
+                   
+             
+    
+        
+def customer2():
+     if auth.is_logged_in():
+        if auth.user.e_rank==2 or auth.user.e_rank==3:
+     
+                   rows=db(db.product).select()
+        
+                   pro_qty=int(request.vars.pro_no)
+        
+                   form = SQLFORM.factory(Field('c_name',label=T("Customer Name"),default=request.vars.c_name,writable=False),
+                  Field('pro_no',label=T("Number of different Products remain"),default=request.vars.pro_no,writable=False),
+#                  for i in range(int(request.vars.pro_no)):
+                        Field(('pro'),label=T("Product Name"),requires=(IS_IN_DB(db, 'product.Name', '%(Name)s'))),
+                        Field('qty',label=T("Quantity"),default='1',requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty)),type='integer'),
+        )
+        
+                   if form.process(formname='form').accepted:
+                                for row in rows:
+                                        if row.Name==form.vars.pro:
+                                             price=row.price
+                                             max_qty=int(row.qty)
+                                                
+                                             if int(row.qty)>=int(form.vars.qty):                                           
+                                                new = db(db.product.id==row.id).select().first()
+                                                new.update_record(qty=int(row.qty)-int(form.vars.qty))
+                                             else:
+                                                session.flash=T("Sorry maximum available quantity of %s  is %d,Please fill give a smaller value")%(form.vars.pro,int(max_qty))
+                                                redirect(URL('customer2',vars={'c_name':request.vars.c_name,'pro_no':pro_qty,'total':int(request.vars.total)}))                
+                                        
+                                
+                                
+                                pro_qty-=1                                
+                                total=int(request.vars.total)+int(int(price)*int(form.vars.qty))
+                                session.flash=T("Total amount %s have to pay is %d")%(request.vars.c_name,total)
+                                if pro_qty==0:
+                                        redirect(URL('customer3',vars={'c_name':request.vars.c_name,'pro_no':pro_qty,'total':total}))                                                
+                                else:
+                                        redirect(URL('customer2',vars={'c_name':request.vars.c_name,'pro_no':pro_qty,'total':total}))                
+                
+                   return dict(rows=rows,form=form)
+     
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+     else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))
+        
+def customer3():
+    if auth.is_logged_in():
+        if auth.user.e_rank==3 or auth.user.e_rank==2:
+     
+         rows=db(db.customer).select()
+
+         form = SQLFORM.factory(Field('c_name',label=T("Customer Name"),default=request.vars.c_name,writable=False),
+                        Field('total',label=T("Total amount to pay"),default=request.vars.total,writable=False),
+                        Field('pay',label=T("Amount Paying(if pay)"),default='0'),
+        )
+         if form.process(formname='form').accepted:
+                       if int(form.vars.pay)>int(request.vars.total):
+                                pay=int(form.vars.pay)-int(request.vars.total)
+                                for row in rows:
+                                                if row.c_name==form.vars.c_name:
+                                                        new = db(db.customer.id==row.id).select().first()
+                                                        new.update_record(credit=int(row.credit)-int(pay))
+                                                        
+                              #need to update credits  on supplier also
+  #                              for sup in supply:
+ #                                               if row.c_name==auth.user.:
+   #                                                     new = db(db.auth_user.id==row.id).select().first()
+    #                                                    new.update_record(credit=int(row.credit)-int(pay))
+                                                                
+                       elif int(form.vars.pay)<int(request.vars.total):
+                                pay=int(request.vars.total)-int(form.vars.pay)
+                                for row in rows:
+                                                if row.c_name==form.vars.c_name:
+                                                        new = db(db.customer.id==row.id).select().first()
+                                                        new.update_record(credit=int(row.credit)+int(pay))                                                 
+                       
+                
+                     
+         return dict(form=form)                              
+   
+       
+        else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))    
+    
+
+        
+
+def add_customer():
+    if auth.is_logged_in():
+       if auth.user.e_rank==1 or auth.user.e_rank==2:
+     
+        rows = db(db.customer).select()
+        form = SQLFORM.factory(Field('Name','string',requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty),IS_NOT_IN_DB(db, 'customer.c_name'))),
+    Field('country', length=28, label=T("Country"), default='India',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_state', length=28, label=T("State"), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_city', length=28, label=T("city"), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_address', length=28, label=T("Door/street NO. "), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_zip', length=6, type='integer',label=T("ZIP code"), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty))),
+    Field('s_no',type='integer',length=10, label=T("Contact number"), default='',
+        requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty),IS_NOT_IN_DB(db, 'customer.s_no'))),
+    Field("s_email",label=T("Email"),requires=(IS_NOT_EMPTY(error_message=auth.messages.is_empty),IS_NOT_IN_DB(db, 'customer.s_email'))) ,   
+    Field('credit','integer',label=T("Credit(initial)"),default='0',writable=False)
+)    
+        
+        if form.process(formname='form').accepted:                
+                db.customer.insert(s_email=form.vars.s_email,s_city=form.vars.s_city,s_no=form.vars.s_no,s_zip=form.vars.s_zip,s_address=form.vars.s_address,s_state=form.vars.s_state,c_name=form.vars.Name,country=form.vars.country)
+                    
+        return dict(form=form)          
+
+       else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))    
+
+
+def delete_customer():
+    if auth.is_logged_in():
+       if auth.user.e_rank==1 or auth.user.e_rank==2:
+     
+        rows = db(db.customer).select()
+        form = SQLFORM.factory(Field('Name','string',requires=(IS_IN_DB(db, 'customer.c_name', '%(c_name)s'))),
+    )    
+        
+        if form.process(formname='form').accepted:                
+          db(db.customer.c_name==form.vars.Name).delete()
+          response.flash=T("%s is now deleted from records")%(form.vars.Name)
+                  
+        return dict(form=form)          
+       
+       else:
+                session.flash=T("You don't have permission for required page")
+                redirect(URL(index))
+           
+    else:
+                session.flash=T("First login to access the required page")
+                redirect(URL(index))    
+def 

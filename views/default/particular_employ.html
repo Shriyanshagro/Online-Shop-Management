@@ -1,0 +1,38 @@
+{{extend 'layout.html'}}
+
+<h1>Full details of {{=request.vars.first_name}} {{=request.vars.last_name}}
+
+
+<div class="copyright pull-right"><img src="/Online_Shop_Management/static/images/employee.png" height="100" width="100" alt="Burden Help" align="right"></div>
+
+
+</h1>
+<table class='table'>
+       <tr>
+       <th>Name</th>
+       <th>Rank</th>
+       <th>Contact no.</th>
+       <th>E-mail</th>
+       <th>Address</th>
+       <th>Salary</th>
+       <th>Leave</th>
+       <th>Credit</th>
+       </tr>
+        
+             <tr>
+             <td>{{=request.vars.first_name}} {{=request.vars.last_name}}</td>
+             <td>{{=request.vars.e_rank}}</td>
+             <td>{{=request.vars.mobile}}</td>
+             <td>{{=request.vars.email}}</td>
+             <td>{{=request.vars.s_address}},{{=request.vars.s_city}},{{=request.vars.s_state}},{{=request.vars.country}},{{=request.vars.zip}}</td>
+             <td>{{=request.vars.salary}}</td>
+             <td>{{=request.vars.e_absent}}</td>
+             <td>{{=request.vars.credit}}</td>
+             </tr>  
+               
+                
+</table>        
+
+{{link = URL(c ='default', f = 'employee')}}
+<h3><a href="{{=link}}">Done</a>
+

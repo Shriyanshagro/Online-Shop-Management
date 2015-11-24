@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}        
+
+<h3>Supplier
+<div class="copyright pull-right"><img src="/Online_Shop_Management/static/images/supply.png" alt="Burden Help" align="right"></div>
+
+</h3>
+<hr>
+
+<h3> Request a supplier for product</h3>
+{{=form2}}
+<hr>
+{{link = URL(c ='default', f = 'allsupply')}}
+<h3><a href="{{=link}}"> Want to  see details of all Suppliers??   <-- Click</a></h3>
+
+
+<hr>
+{{link = URL(c ='default', f = 'add_supplier')}}
+<h3><a href="{{=link}}"> Want to  add a Supplier??   <-- Click</a></h3>
+
+
+<hr>
+
+<h3> Want to  see details of some particular Suppliers? </h3>
+{{=form3}}
+
+<hr>
+
+<h3> Want to  remove a particular Supplier? </h3>
+{{=form4}}
+
+
+

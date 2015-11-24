@@ -1,0 +1,9 @@
+{{extend 'layout.html'}}        
+
+<h3>Remove an existing customer</h3>
+<hr>
+{{=form.add_button('Remove another customer', URL('remove_customer'))}}
+{{=form.add_button('Done', URL('customer'))}}
+
+{{=form}}
+

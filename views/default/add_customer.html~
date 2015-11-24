@@ -1,0 +1,9 @@
+{{extend 'layout.html'}}        
+
+<h3>Add a new customer</h3>
+<hr>
+{{=form.add_button('Add another customer', URL('add_customer'))}}
+{{=form.add_button('Done', URL('customer'))}}
+
+{{=form}}
+

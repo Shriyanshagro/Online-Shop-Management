@@ -1,0 +1,27 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+
+{{block header}}
+    <header class="container-fluid background">
+      <div class="jumbotron text-center">
+        {{if response.title:}}
+        <h1>{{=response.title}}
+          <small>{{=response.subtitle or ''}}</small></h1>
+        {{pass}}
+      </div>
+    </header>
+{{end}}
+
+{{link = URL(c ='default', f = 'user/profile')}}
+<h3><a href="{{=link}}"> Profile</a></h3>
+
+<br>
+<br>
+
+{{if auth.user.e_rank==4:}}
+<Center><h5>You doesn't have any access to any page</h5></center>        
+{{pass}}
+
+{{if auth.user.e_rank!=4:}}
+{{=form}}
+{{pass}}
